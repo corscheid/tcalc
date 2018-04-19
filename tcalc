@@ -1,0 +1,119 @@
+#!/usr/bin/python
+# tcalc <-a|-s> <HHMMSS|HHMM|MM> <HHMMSS|HHMM|MM>
+import sys
+
+class Time():
+
+    def __init__(self, h=0, m=0, s=0):
+        self.max_h = 23
+        self.max_m = 59
+        self.max_s = 59
+        self.min = 0
+        if h >= self.min and h <= self.max_h:
+            self.hour = h
+        else:
+            self.hour = 0
+        if m >= self.min and m <= self.max_m:
+            self.minute = m
+        else:
+            self.minute = 0
+        if s >= self.min and s <= self.max_s:
+            self.second = s
+        else:
+            self.second = 0
+
+    def __str__(self):
+        tstr = ""
+        if self.hour < 10:
+            tstr += "0"
+        tstr += str(self.hour)
+        tstr += ":"
+        if self.minute < 10:
+            tstr += "0"
+        tstr += str(self.minute)
+        tstr += ":"
+        if self.second < 10:
+            tstr += "0"
+        tstr += str(self.second)
+        return tstr
+
+def add(t1, t2):
+    t3h = t1.hour + t2.hour
+    t3m = t1.minute + t2.minute
+    t3s = t1.second + t2.second
+
+    if t3s > t1.max_s:
+        t3m += 1
+        t3s = t3s % 60
+    if t3m > t1.max_m:
+        t3h += 1
+        t3m = t3m % 60
+    if t3h > t1.max_h:
+        t3h = t3h % 24
+
+    return Time(t3h, t3m, t3s)
+
+
+def subtract(t1, t2):
+    t3h = t1.hour - t2.hour
+    t3m = t1.minute - t2.minute
+    t3s = t1.second - t2.second
+
+    if t3s < t1.min:
+        t3m -=1
+        t3s = t3s % 60
+    if t3m < t1.min:
+        t3h -= 1
+        t3m = t3m % 60
+    if t3h < t1.min:
+        t3h = t3h % 24
+
+    return Time(t3h, t3m, t3s)
+
+
+def main():
+    addop = "-a"
+    subop = "-s"
+    if len(sys.argv) != 4:
+        print "e0 usage: tcalc -<a|s> <HHMMSS> <HHMMSS>"
+        sys.exit(1)
+
+    op = sys.argv[1] # -a | -s
+    if op != addop and op != subop:
+        print "e1 usage: tcalc -<a|s> <HHMMSS> <HHMMSS>"
+        sys.exit(1)
+
+    timestr1 = sys.argv[2] # HHMMSS
+    timestr2 = sys.argv[3] # HHMMSS
+
+    timestr1 = "0" * (4-len(timestr1)) + timestr1
+    timestr2 = "0" * (4-len(timestr2)) + timestr2
+
+    if len(timestr1) == 4:
+        timestr1 += "00"
+    if len(timestr2) == 4:
+        timestr2 += "00"
+
+    if len(timestr1) != 6 or len(timestr2) != 6:
+        print "e2 usage: tcalc -<a|s> <HHMMSS> <HHMMSS>"
+        sys.exit(1)
+
+    h1 = int(timestr1[0:2])
+    m1 = int(timestr1[2:4])
+    s1 = int(timestr1[4:])
+
+    h2 = int(timestr2[0:2])
+    m2 = int(timestr2[2:4])
+    s2 = int(timestr2[4:])
+
+    t1 = Time(h1, m1, s1)
+    t2 = Time(h2, m2, s2)
+
+    if op == addop:
+        print add(t1, t2)
+    elif op == subop:
+        print subtract(t1, t2)
+
+
+if __name__ == '__main__':
+    main()
