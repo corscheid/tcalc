@@ -2,6 +2,7 @@
 # tcalc <-a|-s> <HHMMSS|HHMM|MM> <HHMMSS|HHMM|MM>
 import sys
 
+
 class Time():
     def __init__(self, h=0, m=0, s=0):
         self.max_h = 23
@@ -25,7 +26,12 @@ class Time():
             return str(n)
 
     def __str__(self):
-        return self.pad(self.hour) + ":" + self.pad(self.minute) + ":" + self.pad(self.second)
+        return "%s:%s:%s" % (
+            self.pad(self.hour),
+            self.pad(self.minute),
+            self.pad(self.second)
+        )
+
 
 def add(t1, t2):
     t3h = t1.hour + t2.hour
@@ -50,7 +56,7 @@ def subtract(t1, t2):
     t3s = t1.second - t2.second
 
     if t3s < t1.min:
-        t3m -=1
+        t3m -= 1
         t3s = t3s % 60
     if t3m < t1.min:
         t3h -= 1
@@ -60,16 +66,18 @@ def subtract(t1, t2):
 
     return Time(t3h, t3m, t3s)
 
+
 def error(n):
     errors = {
         -1: "",
-        0 : "Error 0: Incorrect number of arguments. (Exactly 4 Required)",
-        1 : "Error 1: Argument after script name must be exactly either -a or -s",
-        2 : "Error 2: Last two arguments must both be 6 digit numbers in form of HHMMSS"
+        0: "Error 0: Incorrect number of arguments. (Exactly 4 Required)",
+        1: "Error 1: Argument after script name must be either -a or -s",
+        2: "Error 2: Last two arguments must both be 6 digit numbers HHMMSS"
     }
     if n not in errors.keys():
         n = -1
     return errors[n]
+
 
 def main():
     addop = "-a"
@@ -79,23 +87,23 @@ def main():
         print "usage: tcalc -<a|s> <HHMMSS> <HHMMSS>"
         sys.exit(1)
 
-    op = sys.argv[1] # -a | -s
+    op = sys.argv[1]  # -a | -s
     if op != addop and op != subop:
         print error(1)
         print "usage: tcalc -<a|s> <HHMMSS> <HHMMSS>"
         sys.exit(1)
 
-    timestr1 = sys.argv[2].replace(":","") # HHMMSS
-    timestr2 = sys.argv[3].replace(":","") # HHMMSS
+    timestr1 = sys.argv[2].replace(":", "")  # HHMMSS
+    timestr2 = sys.argv[3].replace(":", "")  # HHMMSS
 
-    timestr1 = "0" * (4-len(timestr1)) + timestr1
-    timestr2 = "0" * (4-len(timestr2)) + timestr2
+    timestr1 = "0" * (4 - len(timestr1)) + timestr1
+    timestr2 = "0" * (4 - len(timestr2)) + timestr2
 
     if len(timestr1) == 5:
         timestr1 = "0" + timestr1
     if len(timestr2) == 5:
         timestr2 = "0" + timestr2
-        
+
     if len(timestr1) == 4:
         timestr1 += "00"
     if len(timestr2) == 4:
