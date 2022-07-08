@@ -80,7 +80,7 @@ def error(n):
 
 
 def print_help():
-    print("usage: tcalc -<a|s> <HHMMSS> <HHMMSS>")
+    print("Usage: tcalc -<a|s> <HHMMSS> <HHMMSS>")
     print("-a: Add two times")
     print("-s: Subtract two times")
     sys.exit(1)
